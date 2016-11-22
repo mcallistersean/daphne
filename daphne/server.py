@@ -1,6 +1,5 @@
 import logging
-import socket
-
+import warnings
 from twisted.internet import reactor, defer
 from twisted.logger import globalLogBeginner, STDLibLogObserver
 from twisted.internet.endpoints import serverFromString
@@ -36,9 +35,12 @@ class Server(object):
         self.endpoints = endpoints
 
         if any([host, port, unix_socket, file_descriptor]):
-            raise DeprecationWarning('''
+            warnings.warn('''
                 The host/port/unix_socket/file_descriptor keyword arguments to %s are deprecated.
-            ''' % self.__class__.__name__)
+                ''' % self.__class__.__name__,
+                DeprecationWarning
+            )
+
             # build endpoint description strings from deprecated kwargs
             self.endpoints = sorted(self.endpoints + build_endpoint_description_strings(
                 host=host,
